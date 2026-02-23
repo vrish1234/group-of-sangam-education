@@ -1,0 +1,9 @@
+{
+  "name": "Group of Sangam Management System",
+  "description": "A modern, glassy-UI management system for students and management with scholarship forms, admit card generation, result tracking, and payment integration.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

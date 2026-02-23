@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-[#0f172a] text-slate-200 font-sans antialiased;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(20, 184, 166, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+@utility glass {
+  @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl;
+}
+
+@utility glass-card {
+  @apply glass rounded-2xl p-6 transition-all duration-300 hover:bg-white/15 hover:border-white/30;
+}
+
+@utility glass-input {
+  @apply bg-white/5 border border-white/10 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500/50 transition-all;
+}
+
+@utility glass-button {
+  @apply px-6 py-2 rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50;
+}
+
+@utility glass-button-primary {
+  @apply glass-button bg-teal-500/80 hover:bg-teal-400 text-white shadow-lg shadow-teal-500/20;
+}
+
+@utility glass-button-secondary {
+  @apply glass-button bg-white/10 hover:bg-white/20 text-white border border-white/10;
+}
