@@ -76,8 +76,8 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0f172a]">
-        <div className="w-12 h-12 border-4 border-teal-500/30 border-t-teal-500 rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <div className="w-12 h-12 border-4 border-blue-200 border-t-[#1e3a8a] rounded-full animate-spin" />
       </div>
     );
   }
@@ -86,7 +86,7 @@ export default function App() {
   const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() || profile?.role === 'admin';
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
+    <div className="min-h-screen bg-transparent">
       <Toaster position="top-right" />
       
       {!user ? (
