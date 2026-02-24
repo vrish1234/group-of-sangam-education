@@ -76,12 +76,20 @@ CREATE TABLE IF NOT EXISTS public.scholarship_forms (
 
 CREATE TABLE IF NOT EXISTS public.notifications (
   id BIGSERIAL PRIMARY KEY,
+  user_id UUID REFERENCES auth.users ON DELETE CASCADE,
+  title TEXT NOT NULL,
   message TEXT NOT NULL,
-  type TEXT DEFAULT 'broadcast',
-  target TEXT DEFAULT 'all',
-  student_id UUID REFERENCES auth.users ON DELETE CASCADE,
+  is_read BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
+
+ALTER TABLE public.notifications
+  ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS title TEXT,
+  ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT FALSE;
+
+UPDATE public.notifications SET title = COALESCE(title, 'Admin Notice');
+ALTER TABLE public.notifications ALTER COLUMN title SET NOT NULL;
 
 CREATE TABLE IF NOT EXISTS public.online_classes (
   id BIGSERIAL PRIMARY KEY,
@@ -135,6 +143,44 @@ CREATE TABLE IF NOT EXISTS public.results (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
+
+ALTER TABLE public.scholarship_forms
+  ADD COLUMN IF NOT EXISTS registration_id TEXT UNIQUE,
+  ADD COLUMN IF NOT EXISTS exam_date DATE,
+  ADD COLUMN IF NOT EXISTS exam_centre TEXT;
+
+ALTER TABLE public.admit_cards
+  ADD COLUMN IF NOT EXISTS registration_id TEXT;
+
+ALTER TABLE public.tests
+  ADD COLUMN IF NOT EXISTS questions JSONB DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS duration_minutes INTEGER DEFAULT 10;
+
+ALTER TABLE public.online_classes
+  ADD COLUMN IF NOT EXISTS youtube_id TEXT;
+
+ALTER TABLE public.results
+  ADD COLUMN IF NOT EXISTS rank INTEGER;
+
+CREATE TABLE IF NOT EXISTS public.class_messages (
+  id BIGSERIAL PRIMARY KEY,
+  student_id UUID REFERENCES auth.users ON DELETE CASCADE,
+  student_name TEXT,
+  sender_role TEXT DEFAULT 'student',
+  message TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.test_history (
+  id BIGSERIAL PRIMARY KEY,
+  student_id UUID REFERENCES auth.users ON DELETE CASCADE,
+  test_id UUID REFERENCES public.tests ON DELETE CASCADE,
+  score NUMERIC NOT NULL,
+  correct_count INTEGER DEFAULT 0,
+  total_questions INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS public.feedback (
   id BIGSERIAL PRIMARY KEY,
   student_id UUID REFERENCES auth.users ON DELETE CASCADE,
@@ -148,4 +194,7 @@ CREATE INDEX IF NOT EXISTS idx_profiles_roll_number ON public.profiles(roll_numb
 CREATE INDEX IF NOT EXISTS idx_scholarship_forms_payment_status ON public.scholarship_forms(payment_status);
 CREATE INDEX IF NOT EXISTS idx_scholarship_forms_student_id ON public.scholarship_forms(student_id);
 CREATE INDEX IF NOT EXISTS idx_admit_cards_student_id ON public.admit_cards(student_id);
-CREATE INDEX IF NOT EXISTS idx_notifications_student_id ON public.notifications(student_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON public.notifications(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_scholarship_forms_registration_id ON public.scholarship_forms(registration_id);
+CREATE INDEX IF NOT EXISTS idx_test_payments_student_test ON public.test_payments(student_id, test_id);
