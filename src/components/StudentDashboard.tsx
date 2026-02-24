@@ -9,6 +9,10 @@ type TabKey = 'home' | 'scholarships' | 'live' | 'tests' | 'payments' | 'about';
 
 const makeRegistrationId = () => `SNG-${Date.now().toString().slice(-7)}-${Math.floor(100 + Math.random() * 900)}`;
 
+type TabKey = 'home' | 'scholarships' | 'live' | 'tests' | 'payments' | 'about';
+
+const generateRegistrationId = () => `SNG-${Date.now().toString().slice(-7)}-${Math.floor(100 + Math.random() * 900)}`;
+
 export const StudentDashboard = ({ user, profile, onLogout }: { user: any, profile: any, onLogout: () => void }) => {
   const [activeTab, setActiveTab] = useState<'home' | 'scholarships' | 'about'>('home');
   const [notifications, setNotifications] = useState<any[]>([]);
