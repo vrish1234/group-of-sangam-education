@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -6,37 +6,42 @@
 }
 
 @layer base {
+  * {
+    @apply transition-all duration-300;
+  }
+
   body {
-    @apply bg-[#0f172a] text-slate-200 font-sans antialiased;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(20, 184, 166, 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
+    @apply min-h-screen text-slate-100 font-sans antialiased;
+    background:
+      radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.18), transparent 35%),
+      radial-gradient(circle at 80% 10%, rgba(168, 85, 247, 0.20), transparent 35%),
+      radial-gradient(circle at 90% 80%, rgba(29, 78, 216, 0.28), transparent 42%),
+      linear-gradient(140deg, #020617 0%, #0b1b4d 35%, #1d4ed8 100%);
     background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4 {
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   }
 }
 
+@utility page-fade {
+  animation: pageFadeIn 0.45s ease;
+}
+
 @utility glass {
-  @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 20px;
 }
 
-@utility glass-card {
-  @apply glass rounded-2xl p-6 transition-all duration-300 hover:bg-white/15 hover:border-white/30;
+@utility neon-primary {
+  background: linear-gradient(90deg, #22d3ee 0%, #a855f7 100%);
+  box-shadow: 0 0 22px rgba(34, 211, 238, 0.45), 0 0 34px rgba(168, 85, 247, 0.35);
 }
 
-@utility glass-input {
-  @apply bg-white/5 border border-white/10 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500/50 transition-all;
-}
-
-@utility glass-button {
-  @apply px-6 py-2 rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50;
-}
-
-@utility glass-button-primary {
-  @apply glass-button bg-teal-500/80 hover:bg-teal-400 text-white shadow-lg shadow-teal-500/20;
-}
-
-@utility glass-button-secondary {
-  @apply glass-button bg-white/10 hover:bg-white/20 text-white border border-white/10;
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }

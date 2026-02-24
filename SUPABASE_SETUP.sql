@@ -76,12 +76,20 @@ CREATE TABLE IF NOT EXISTS public.scholarship_forms (
 
 CREATE TABLE IF NOT EXISTS public.notifications (
   id BIGSERIAL PRIMARY KEY,
+  user_id UUID REFERENCES auth.users ON DELETE CASCADE,
+  title TEXT NOT NULL,
   message TEXT NOT NULL,
-  type TEXT DEFAULT 'broadcast',
-  target TEXT DEFAULT 'all',
-  student_id UUID REFERENCES auth.users ON DELETE CASCADE,
+  is_read BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
+
+ALTER TABLE public.notifications
+  ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS title TEXT,
+  ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT FALSE;
+
+UPDATE public.notifications SET title = COALESCE(title, 'Admin Notice');
+ALTER TABLE public.notifications ALTER COLUMN title SET NOT NULL;
 
 CREATE TABLE IF NOT EXISTS public.online_classes (
   id BIGSERIAL PRIMARY KEY,
@@ -148,4 +156,4 @@ CREATE INDEX IF NOT EXISTS idx_profiles_roll_number ON public.profiles(roll_numb
 CREATE INDEX IF NOT EXISTS idx_scholarship_forms_payment_status ON public.scholarship_forms(payment_status);
 CREATE INDEX IF NOT EXISTS idx_scholarship_forms_student_id ON public.scholarship_forms(student_id);
 CREATE INDEX IF NOT EXISTS idx_admit_cards_student_id ON public.admit_cards(student_id);
-CREATE INDEX IF NOT EXISTS idx_notifications_student_id ON public.notifications(student_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON public.notifications(user_id);
