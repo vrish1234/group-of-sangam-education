@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthScreen } from './components/AuthScreen';
-import { StudentDashboard } from './components/StudentDashboard';
-import { ManagementDashboard } from './components/ManagementDashboard';
+import { StudentDashboard } from './components/Dashboard/StudentDashboard';
+import { ManagementDashboard } from './components/Dashboard/ManagementDashboard';
 import { supabase } from './lib/supabase';
 
 const ADMIN_EMAIL = 'vrishketuray@gmail.com';
+const DASHBOARD_BUILD_VERSION = '0.1.0';
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
@@ -13,12 +14,11 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Try to load profile from cache first
     const cachedProfile = localStorage.getItem('sangam_profile_cache');
     if (cachedProfile) {
       try {
         setProfile(JSON.parse(cachedProfile));
-      } catch (e) {
+      } catch {
         console.error('Failed to parse cached profile');
       }
     }
@@ -46,14 +46,23 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+    const versionKey = 'sangam_dashboard_build_version';
+    const reloadKey = 'sangam_dashboard_reload_once';
+    const current = localStorage.getItem(versionKey);
+    const alreadyReloaded = sessionStorage.getItem(reloadKey);
+
+    if (current !== DASHBOARD_BUILD_VERSION && !alreadyReloaded) {
+      localStorage.setItem(versionKey, DASHBOARD_BUILD_VERSION);
+      sessionStorage.setItem(reloadKey, '1');
+      window.location.reload();
+    }
+  }, [user]);
+
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
       if (error) {
         console.warn('Profile not found for user:', userId);
       } else {
@@ -76,30 +85,23 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0f172a]">
-        <div className="w-12 h-12 border-4 border-teal-500/30 border-t-teal-500 rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <div className="w-12 h-12 border-4 border-blue-200 border-t-[#1e3a8a] rounded-full animate-spin" />
       </div>
     );
   }
 
-  // Check if user is admin by email or by profile role
   const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() || profile?.role === 'admin';
 
   return (
-    <div className="min-h-screen bg-[#0f172a]">
+    <div className="min-h-screen bg-transparent">
       <Toaster position="top-right" />
-      
       {!user ? (
-        <AuthScreen onAuthSuccess={(u) => {
-          setUser(u);
-          fetchProfile(u.id);
-        }} />
+        <AuthScreen onAuthSuccess={(u) => { setUser(u); fetchProfile(u.id); }} />
+      ) : isAdmin ? (
+        <ManagementDashboard user={user} profile={profile} onLogout={handleLogout} />
       ) : (
-        isAdmin ? (
-          <ManagementDashboard user={user} profile={profile} onLogout={handleLogout} />
-        ) : (
-          <StudentDashboard user={user} profile={profile} onLogout={handleLogout} />
-        )
+        <StudentDashboard user={user} profile={profile} onLogout={handleLogout} />
       )}
     </div>
   );
