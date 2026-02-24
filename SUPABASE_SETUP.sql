@@ -193,6 +193,3 @@ CREATE INDEX IF NOT EXISTS idx_scholarship_forms_payment_status ON public.schola
 CREATE INDEX IF NOT EXISTS idx_scholarship_forms_student_id ON public.scholarship_forms(student_id);
 CREATE INDEX IF NOT EXISTS idx_admit_cards_student_id ON public.admit_cards(student_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON public.notifications(user_id);
-
-CREATE INDEX IF NOT EXISTS idx_scholarship_forms_registration_id ON public.scholarship_forms(registration_id);
-CREATE INDEX IF NOT EXISTS idx_test_payments_student_test ON public.test_payments(student_id, test_id);
