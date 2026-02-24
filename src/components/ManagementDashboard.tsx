@@ -116,6 +116,7 @@ export const ManagementDashboard = ({ user, profile, onLogout }: { user: any, pr
                   </div>
                 ))}
               </div>
+              {filteredStudents.map((s) => { const admit = admitCards.find((a) => a.student_id === s.id); return <div key={s.id} className="rounded-2xl bg-white/10 p-3"><p className="font-semibold">{s.full_name}</p><p className="text-sm text-slate-300">Reg: {formsByStudent.get(s.id)?.registration_id || 'No Reg ID'}</p><p className="text-xs text-slate-400">Exam: {admit?.exam_date || 'N/A'} • {admit?.exam_centre || 'N/A'}</p>{formsByStudent.get(s.id)?.status !== 'approved' && <GlassButton size="sm" className="mt-2" onClick={() => approveScholarship(s.id)}><CheckCircle2 size={14}/> Approve</GlassButton>}</div>; })}
             </GlassCard>
 
             <GlassCard className="space-y-4 rounded-xl shadow-md">
