@@ -143,6 +143,42 @@ CREATE TABLE IF NOT EXISTS public.results (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
+
+ALTER TABLE public.scholarship_forms
+  ADD COLUMN IF NOT EXISTS registration_id TEXT UNIQUE;
+
+ALTER TABLE public.admit_cards
+  ADD COLUMN IF NOT EXISTS registration_id TEXT;
+
+ALTER TABLE public.tests
+  ADD COLUMN IF NOT EXISTS questions JSONB DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS duration_minutes INTEGER DEFAULT 10;
+
+ALTER TABLE public.online_classes
+  ADD COLUMN IF NOT EXISTS youtube_id TEXT;
+
+ALTER TABLE public.results
+  ADD COLUMN IF NOT EXISTS rank INTEGER;
+
+CREATE TABLE IF NOT EXISTS public.class_messages (
+  id BIGSERIAL PRIMARY KEY,
+  student_id UUID REFERENCES auth.users ON DELETE CASCADE,
+  student_name TEXT,
+  sender_role TEXT DEFAULT 'student',
+  message TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.test_history (
+  id BIGSERIAL PRIMARY KEY,
+  student_id UUID REFERENCES auth.users ON DELETE CASCADE,
+  test_id UUID REFERENCES public.tests ON DELETE CASCADE,
+  score NUMERIC NOT NULL,
+  correct_count INTEGER DEFAULT 0,
+  total_questions INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS public.feedback (
   id BIGSERIAL PRIMARY KEY,
   student_id UUID REFERENCES auth.users ON DELETE CASCADE,
